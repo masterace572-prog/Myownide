@@ -1,0 +1,42 @@
+# Forge IDE — Architecture
+
+## Module layout
+
+Single `:app` module for Milestone 0. Split into feature/UI/library modules as
+the toolchain, editor and terminal grow.
+
+```
+app/src/main/java/com/anoy/ide/
+├── core/ui/theme/        Design tokens (color, type, shape, theme)
+├── core/ui/components/   Reusable quiet UI primitives
+├── navigation/           High-level session flow model
+├── onboarding/           First-run onboarding
+├── auth/                 Welcome + email/password flow
+├── toolchain/            Toolchain setup list + simulated install state
+├── workspace/            Main shell with bottom navigation
+└── ForgeApp.kt            Top-level session router
+```
+
+## Design system rules
+
+- One accent color per screen. Color communicates state, never decoration.
+- Serif for display/headings, sans for UI, monospace for code.
+- No emojis, gradients, neon, glowing elements, or colored text pills.
+- Status is expressed in words, optionally with a small neutral glyph.
+- 8 dp spacing grid, 48 dp minimum touch targets, 12/10/8/24 radius scale.
+
+## Package / naming conventions
+
+- Package segments: `core`, `feature`, `navigation`, `ui`.
+- Screens end in `Screen`; state holders end in `ViewModel`.
+- Public composables are `@Composable` and accept `modifier` when appropriate.
+
+## Current data flow
+
+`MainActivity` -> `ForgeTheme` -> `ForgeApp` (in-memory stage state machine) ->
+feature screens. The router is intentionally simple for M0; replace with
+persisted session state + Navigation Compose once auth lands.
+
+## Roadmap handoff
+
+See [`ROADMAP.md`](./ROADMAP.md) for the ordered task list.

@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Forge</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_continue">Continue</string>
+
+    <string name="welcome_title">Welcome to Forge</string>
+    <string name="welcome_body">Build real Android apps on your phone. Set up a toolchain once, then write, compile, test and install entirely on-device.</string>
+    <string name="welcome_google">Continue with Google</string>
+    <string name="welcome_email">Continue with email</string>
+    <string name="welcome_without_account">Continue without an account</string>
+
+    <string name="setup_title">Set up your toolchain</string>
+    <string name="setup_body">Forge downloads and verifies a complete Android build environment so you never need a laptop.</string>
+    <string name="setup_action">Set up toolchain</string>
+    <string name="setup_ready">Toolchain ready</string>
+
+    <string name="workspace_files">Files</string>
+    <string name="workspace_editor">Editor</string>
+    <string name="workspace_build">Build</string>
+    <string name="workspace_terminal">Terminal</string>
+</resources>
