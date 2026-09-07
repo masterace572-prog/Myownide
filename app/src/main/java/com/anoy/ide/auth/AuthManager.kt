@@ -9,7 +9,9 @@ import io.github.jan.supabase.SupabaseClient
  * and exposes whether a session exists. Google sign-in is added in the next
  * step (requires a Google OAuth client ID configured in the Supabase project).
  */
-class AuthManager(private val client: SupabaseClient = createSupabaseClientForAuth()) {
+class AuthManager(private val client: SupabaseClient) {
+
+    constructor() : this(defaultAuthClient())
 
     val configured: Boolean get() = ForgeConfig.isSupabaseConfigured
 
@@ -35,19 +37,17 @@ class AuthManager(private val client: SupabaseClient = createSupabaseClientForAu
 
     val isSignedIn: Boolean
         get() = client.auth.currentSessionOrNull() != null
+}
 
-    private companion object {
-        fun createSupabaseClientForAuth(): SupabaseClient {
-            return if (ForgeConfig.isSupabaseConfigured) {
-                createSupabaseClient()
-            } else {
-                // Safe no-op client with placeholder config. The UI stays
-                // functional in local-only mode until real credentials arrive.
-                createSupabaseClient(
-                    url = "https://placeholder.supabase.co",
-                    anonKey = "placeholder"
-                )
-            }
-        }
+private fun defaultAuthClient(): SupabaseClient {
+    return if (ForgeConfig.isSupabaseConfigured) {
+        createSupabaseClient()
+    } else {
+        // Safe no-op client with placeholder config. The UI stays
+        // functional in local-only mode until real credentials arrive.
+        createSupabaseClient(
+            url = "https://placeholder.supabase.co",
+            anonKey = "placeholder"
+        )
     }
 }
