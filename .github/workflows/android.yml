@@ -9,11 +9,8 @@ on:
 jobs:
   build-debug:
     name: Build debug APK
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    permissions:
-      contents: write
 
     env:
       GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx2g -Dorg.gradle.daemon=false"
@@ -50,23 +47,9 @@ jobs:
           ARGS=""
           if [ -n "${{ secrets.SUPABASE_URL }}" ]; then ARGS="$ARGS -PSUPABASE_URL=${{ secrets.SUPABASE_URL }}"; fi
           if [ -n "${{ secrets.SUPABASE_ANON_KEY }}" ]; then ARGS="$ARGS -PSUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}"; fi
-          set +e
-          ./gradlew :app:assembleDebug --stacktrace $ARGS > build-log.txt 2>&1
-          CODE=$?
-          cat build-log.txt
-          exit $CODE
-
-      - name: Publish build log
-        if: failure()
-        run: |
-          git config user.name "forge-ci"
-          git config user.email "forge-ci@users.noreply.github.com"
-          git add -f build-log.txt
-          git commit -m "[skip ci] build log" > /dev/null 2>&1 || true
-          git push origin HEAD:arena/01a07981-myownide > /dev/null 2>&1 || true
+          ./gradlew :app:assembleDebug --stacktrace $ARGS
 
       - name: Upload debug APK
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: forge-debug-apk
@@ -74,19 +57,4 @@ jobs:
           if-no-files-found: error
 
       - name: Run unit tests
-        if: success()
-        run: |
-          set +e
-          ./gradlew :app:testDebugUnitTest --stacktrace > build-log.txt 2>&1
-          CODE=$?
-          cat build-log.txt
-          exit $CODE
-
-      - name: Publish test log
-        if: failure()
-        run: |
-          git config user.name "forge-ci"
-          git config user.email "forge-ci@users.noreply.github.com"
-          git add -f build-log.txt
-          git commit -m "[skip ci] test log" > /dev/null 2>&1 || true
-          git push origin HEAD:arena/01a07981-myownide > /dev/null 2>&1 || true
+        run: ./gradlew :app:testDebugUnitTest --stacktrace
