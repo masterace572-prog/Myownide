@@ -31,6 +31,7 @@ object GradleProjectGenerator {
         writeSettings(root, config, isLibrary)
         writeRootBuild(root, config, isLibrary)
         writeProperties(root)
+        writeWrapperProperties(root)
         writeModuleBuild(root, moduleName, config, isLibrary)
 
         if (isLibrary) {
@@ -125,6 +126,19 @@ object GradleProjectGenerator {
             org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
             android.useAndroidX=true
             android.nonTransitiveRClass=true
+            """.trimIndent()
+        )
+    }
+
+    private fun writeWrapperProperties(root: File) {
+        write(
+            root, "gradle/wrapper/gradle-wrapper.properties",
+            """
+            distributionBase=GRADLE_USER_HOME
+            distributionPath=wrapper/dists
+            distributionUrl=https\://services.gradle.org/distributions/gradle-8.9-bin.zip
+            zipStoreBase=GRADLE_USER_HOME
+            zipStorePath=wrapper/dists
             """.trimIndent()
         )
     }
