@@ -28,3 +28,4 @@ captures/
 *.jks
 *.keystore
 keystore.properties
+build-log.txt

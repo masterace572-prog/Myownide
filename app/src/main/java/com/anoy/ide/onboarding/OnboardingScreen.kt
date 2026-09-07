@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -166,7 +168,7 @@ private fun OnboardingIllustration(tint: Color) {
         contentAlignment = Alignment.Center
     ) {
         androidx.compose.material3.Icon(
-            imageVector = androidx.compose.material.icons.Icons.Outlined.Code,
+            imageVector = Icons.Outlined.Code,
             contentDescription = null,
             tint = tint,
             modifier = Modifier.size(56.dp)
