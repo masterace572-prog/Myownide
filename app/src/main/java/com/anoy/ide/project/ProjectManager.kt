@@ -29,7 +29,7 @@ data class ProjectInfo(
  *
  * Source lives only on-device; Forge never uploads it.
  */
-class ProjectManager(context: Context) {
+class ProjectManager(private val context: Context) {
 
     private val rootDir = File(context.filesDir, "projects")
     private val json = Json {

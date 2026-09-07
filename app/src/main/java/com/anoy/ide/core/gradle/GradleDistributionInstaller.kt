@@ -2,9 +2,9 @@ package com.anoy.ide.core.gradle
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.UserAgent
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsChannel
+import io.ktor.http.HttpHeaders
 import io.ktor.http.isSuccess
 import io.ktor.utils.io.readAvailable
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,11 +35,7 @@ sealed interface GradleInstallResult {
  */
 class GradleDistributionInstaller {
 
-    private val client = HttpClient(OkHttp) {
-        install(UserAgent) {
-            version = "Forge-IDE/0.1"
-        }
-    }
+    private val client = HttpClient(OkHttp)
 
     private val _state = MutableStateFlow<GradleDownloadState>(GradleDownloadState.Idle())
     val state: StateFlow<GradleDownloadState> = _state.asStateFlow()
@@ -87,7 +83,7 @@ class GradleDistributionInstaller {
             if (!response.status.isSuccess()) {
                 throw IllegalStateException("HTTP ${response.status} for ${info.distributionUrl}")
             }
-            val contentLength = response.contentLength()
+            val contentLength = response.headers[HttpHeaders.ContentLength]?.toLongOrNull()
             val channel = response.bodyAsChannel()
             val temp = File(cacheDir, "$fileName.part")
             FileOutputStream(temp).use { output ->
