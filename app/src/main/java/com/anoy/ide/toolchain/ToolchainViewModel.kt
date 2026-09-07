@@ -61,15 +61,16 @@ class ToolchainViewModel : ViewModel() {
                 ToolchainComponent("Build-Tools", "35.0.0", "120 MB",
                     requiredForBuild = true,
                     note = "aapt2, d8, apksigner, zipalign"),
-                ToolchainComponent("Platform-Tools (adb)", "35.0.2", "12 MB",
-                    requiredForBuild = true),
                 ToolchainComponent("Gradle launcher", "wrapper-aware", "40 MB",
                     requiredForBuild = true,
                     note = "Projects use their own Gradle wrapper version"),
                 ToolchainComponent("Kotlin compiler", "2.0.0", "90 MB",
                     requiredForBuild = true),
 
-                // Optional; not needed to compile a plain Android project.
+                // Optional; not needed to compile or to install on this device.
+                ToolchainComponent("Platform-Tools (adb)", "35.0.2", "12 MB",
+                    requiredForBuild = false,
+                    note = "Second-device installs, logcat, instrumented tests, debugging"),
                 ToolchainComponent("Git", "2.45.0", "25 MB",
                     requiredForBuild = false,
                     note = "Version control UI"),

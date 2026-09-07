@@ -24,9 +24,9 @@ Implemented so far:
   (simulated install flow), and a workspace shell with Files / Editor / Build /
   Terminal bottom navigation.
 - Toolchain screen marks only components needed to compile an Android project
-  as required (JDK, Android SDK platform, build-tools, platform-tools, Gradle
-  wrapper launcher, Kotlin compiler). Git, NDK, extra API levels, and offline
-  sources are optional.
+  as required (JDK, Android SDK platform, build-tools, Gradle wrapper launcher,
+  Kotlin compiler). adb, Git, NDK, extra API levels, and offline sources are
+  optional and can be added later.
 - M0 roadmap and architecture docs, plus Gradle-compatibility docs (projects use
   their own Gradle wrapper version).
 

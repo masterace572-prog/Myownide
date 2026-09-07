@@ -9,6 +9,7 @@ the toolchain, editor and terminal grow.
 app/src/main/java/com/anoy/ide/
 ├── core/ui/theme/        Design tokens (color, type, shape, theme)
 ├── core/ui/components/   Reusable quiet UI primitives
+├── core/build/           Gradle wrapper resolution (project-specific Gradle)
 ├── navigation/           High-level session flow model
 ├── onboarding/           First-run onboarding
 ├── auth/                 Welcome + email/password flow
