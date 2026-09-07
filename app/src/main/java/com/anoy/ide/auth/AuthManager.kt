@@ -3,7 +3,7 @@ package com.anoy.ide.auth
 import com.anoy.ide.core.config.ForgeConfig
 import com.anoy.ide.core.supabase.createSupabaseClient
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.auth.sessionOrNull
+import io.github.jan.supabase.auth.currentSessionOrNull
 
 /**
  * Thin auth facade for Milestone 0. It wires email/password against Supabase
@@ -35,7 +35,7 @@ class AuthManager(private val client: SupabaseClient = createSupabaseClientForAu
     }
 
     val isSignedIn: Boolean
-        get() = client.auth.sessionOrNull != null
+        get() = client.auth.currentSessionOrNull() != null
 
     private companion object {
         fun createSupabaseClientForAuth(): SupabaseClient {
