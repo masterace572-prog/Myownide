@@ -47,9 +47,22 @@ jobs:
           ARGS=""
           if [ -n "${{ secrets.SUPABASE_URL }}" ]; then ARGS="$ARGS -PSUPABASE_URL=${{ secrets.SUPABASE_URL }}"; fi
           if [ -n "${{ secrets.SUPABASE_ANON_KEY }}" ]; then ARGS="$ARGS -PSUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}"; fi
-          ./gradlew :app:assembleDebug --stacktrace $ARGS
+          set +e
+          ./gradlew :app:assembleDebug --stacktrace $ARGS > build-log.txt 2>&1
+          CODE=$?
+          cat build-log.txt
+          exit $CODE
+
+      - name: Upload build log on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build-log.txt
+          if-no-files-found: warn
 
       - name: Upload debug APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: forge-debug-apk
@@ -57,4 +70,5 @@ jobs:
           if-no-files-found: error
 
       - name: Run unit tests
+        if: success()
         run: ./gradlew :app:testDebugUnitTest --stacktrace
