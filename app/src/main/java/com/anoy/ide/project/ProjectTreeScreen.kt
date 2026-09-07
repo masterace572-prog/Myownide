@@ -98,7 +98,7 @@ private fun TreeNodeRow(node: ProjectTreeNode, depth: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = (depth * 16).dp, vertical = 8.dp),
+            .padding(start = (depth * 16).dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
