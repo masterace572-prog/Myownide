@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Terminal
 import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material3.Icon
@@ -29,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.anoy.ide.core.session.ThemePreference
 import com.anoy.ide.project.FilesScreen
 
 private data class WorkspaceTab(
@@ -70,8 +72,13 @@ private val tabs = listOf(
  * phone layout. Mobile-only in M0; tablet three-pane layout comes later.
  */
 @Composable
-fun WorkspaceScreen(onSignOut: () -> Unit) {
+fun WorkspaceScreen(
+    theme: ThemePreference,
+    onThemeChange: (ThemePreference) -> Unit,
+    onSignOut: () -> Unit
+) {
     var selectedIndex by rememberSaveable { mutableStateOf(0) }
+    var showSettings by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -87,15 +94,21 @@ fun WorkspaceScreen(onSignOut: () -> Unit) {
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.align(Alignment.CenterStart)
                     )
-                    IconButton(
-                        onClick = onSignOut,
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Logout,
-                            contentDescription = "Sign out",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                    Row(modifier = Modifier.align(Alignment.CenterEnd)) {
+                        IconButton(onClick = { showSettings = true }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Settings,
+                                contentDescription = "Settings",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        IconButton(onClick = onSignOut) {
+                            Icon(
+                                imageVector = Icons.Outlined.Logout,
+                                contentDescription = "Sign out",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
             }
@@ -121,6 +134,21 @@ fun WorkspaceScreen(onSignOut: () -> Unit) {
             }
         }
     ) { paddingValues ->
+        if (showSettings) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                SettingsScreen(
+                    theme = theme,
+                    onThemeChange = onThemeChange,
+                    onBack = { showSettings = false }
+                )
+            }
+            return@Scaffold
+        }
+
         if (selectedIndex == 0) {
             Box(
                 modifier = Modifier

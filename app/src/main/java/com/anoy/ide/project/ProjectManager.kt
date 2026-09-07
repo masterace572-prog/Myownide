@@ -1,6 +1,8 @@
 package com.anoy.ide.project
 
 import android.content.Context
+import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -79,6 +81,47 @@ class ProjectManager(context: Context) {
 
     suspend fun deleteProject(path: String) = withContext(Dispatchers.IO) {
         File(path).deleteRecursively()
+    }
+
+    /**
+     * Import a project folder selected through Safari/Documents UI (SAF).
+     * Forge copies the selected tree into private storage so it can be read
+     * and edited normally. Returns the imported project metadata.
+     */
+    suspend fun importFromSaf(uri: Uri): ProjectInfo = withContext(Dispatchers.IO) {
+        val tree = DocumentFile.fromTreeUri(context, uri)
+            ?: error("Could not open the selected folder.")
+        val sourceName = tree.name ?: "opened-project"
+        val destDir = File(rootDir, safeFolderName(sourceName))
+        require(!destDir.exists()) {
+            "A project named '$sourceName' already exists. Rename it and try again."
+        }
+        copyTree(tree, destDir)
+        val info = ProjectInfo(
+            name = sourceName,
+            path = destDir.absolutePath,
+            template = ProjectTemplate.NO_ACTIVITY.name,
+            packageName = "",
+            minSdk = 24,
+            createdAt = System.currentTimeMillis(),
+            lastOpenedAt = System.currentTimeMillis()
+        )
+        writeMetadata(destDir, info)
+        info
+    }
+
+    private fun copyTree(document: DocumentFile, destination: File) {
+        if (document.isDirectory) {
+            destination.mkdirs()
+            document.listFiles().forEach { child ->
+                copyTree(child, File(destination, child.name ?: "file"))
+            }
+        } else {
+            destination.parentFile?.mkdirs()
+            val bytes = context.contentResolver.openInputStream(document.uri)?.use { it.readBytes() }
+                ?: error("Could not read ${document.name ?: document.uri}")
+            destination.writeBytes(bytes)
+        }
     }
 
     private fun readMetadata(dir: File): ProjectInfo? {

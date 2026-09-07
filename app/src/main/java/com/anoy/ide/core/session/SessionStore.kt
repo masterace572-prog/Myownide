@@ -20,6 +20,7 @@ class SessionStore(private val context: Context) {
     val stage: Flow<String> = context.sessionDataStore.data.map { it[STAGE] ?: ONBOARDING }
     val onboardingCompleted: Flow<Boolean> = context.sessionDataStore.data.map { it[ONBOARDING_DONE] ?: false }
     val toolchainVerified: Flow<Boolean> = context.sessionDataStore.data.map { it[TOOLCHAIN_VERIFIED] ?: false }
+    val theme: Flow<String> = context.sessionDataStore.data.map { it[THEME] ?: ThemePreference.SYSTEM.name }
 
     suspend fun setStage(value: String) {
         context.sessionDataStore.edit { it[STAGE] = value }
@@ -33,6 +34,10 @@ class SessionStore(private val context: Context) {
         context.sessionDataStore.edit { it[TOOLCHAIN_VERIFIED] = value }
     }
 
+    suspend fun setTheme(value: ThemePreference) {
+        context.sessionDataStore.edit { it[THEME] = value.name }
+    }
+
     companion object {
         const val ONBOARDING = "ONBOARDING"
         const val WELCOME = "WELCOME"
@@ -43,5 +48,6 @@ class SessionStore(private val context: Context) {
         private val STAGE = stringPreferencesKey("stage")
         private val ONBOARDING_DONE = booleanPreferencesKey("onboarding_completed")
         private val TOOLCHAIN_VERIFIED = booleanPreferencesKey("toolchain_verified")
+        private val THEME = stringPreferencesKey("theme")
     }
 }

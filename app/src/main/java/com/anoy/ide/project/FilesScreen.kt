@@ -1,5 +1,7 @@
 package com.anoy.ide.project
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -31,6 +33,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.anoy.ide.core.ui.components.ForgeOutlinedButton
 import com.anoy.ide.core.ui.components.ForgePrimaryButton
+import com.anoy.ide.core.ui.components.ForgeStatusLabel
+import com.anoy.ide.core.ui.components.StatusTone
 import kotlinx.coroutines.launch
 
 /**
@@ -46,6 +50,26 @@ fun FilesScreen() {
     var showNewProject by remember { mutableStateOf(false) }
     var selectedProject by remember { mutableStateOf<ProjectInfo?>(null) }
     var openFile by remember { mutableStateOf<ProjectTreeNode?>(null) }
+    var importError by remember { mutableStateOf<String?>(null) }
+    var importing by remember { mutableStateOf(false) }
+
+    val openProjectLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree()
+    ) { uri ->
+        if (uri != null) {
+            scope.launch {
+                importing = true
+                importError = null
+                runCatching { manager.importFromSaf(uri) }
+                    .onSuccess { imported ->
+                        selectedProject = imported
+                        projects = manager.listProjects()
+                    }
+                    .onFailure { importError = it.message ?: "Could not open the project." }
+                importing = false
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         projects = manager.listProjects()
@@ -99,9 +123,18 @@ fun FilesScreen() {
             )
             Spacer(modifier = Modifier.padding(horizontal = 6.dp))
             ForgeOutlinedButton(
-                text = "Open",
-                onClick = { /* TODO(M1): SAF folder picker + Git clone */ },
+                text = if (importing) "Opening…" else "Open",
+                onClick = { openProjectLauncher.launch(null) },
+                enabled = !importing,
                 modifier = Modifier.weight(1f)
+            )
+        }
+
+        if (importError != null) {
+            ForgeStatusLabel(
+                text = importError!!,
+                tone = StatusTone.Error,
+                modifier = Modifier.padding(top = 12.dp)
             )
         }
 

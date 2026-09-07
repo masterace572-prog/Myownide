@@ -9,6 +9,7 @@ Work is derived from [`PRD.md`](../PRD.md) and prioritised by P0 / P1 / P2.
 - [x] Splash screen (Android 12 SplashScreen API)
 - [x] Onboarding (3 pages, page indicators)
 - [x] Welcome, email/password auth flow (UI only, inline validation)
+- [x] Settings screen with persisted theme preference
 - [ ] Supabase auth (Google via Credential Manager, email/password, session)
 - [ ] DataStore persistence for session/setup/theme
 - [ ] Room cache layer and repository contracts
@@ -19,11 +20,13 @@ Work is derived from [`PRD.md`](../PRD.md) and prioritised by P0 / P1 / P2.
 ## Milestone 1 — Build loop (8 weeks)
 
 - [ ] Toolchain installer: resumable downloads, SHA-256, verified install
+      (Gradle distribution core + SHA-256 verification done)
 - [ ] Process runtime: foreground service, controlled env, pty JNI
 - [x] New project wizard (Empty Compose/Views, Basic Views, Library, No Activity;
       Kotlin/Java, Kotlin DSL/Groovy)
 - [x] Project generation + local project manager (files/projects)
-- [ ] Project tree file operations, filter build/.gradle (tree listing done)
+- [x] Project tree file operations, filter build/.gradle (tree listing done)
+- [x] Open existing project from SAF folder picker (copy into private storage)
 - [x] Editor shell: open/edit/save text files from project tree
 - [ ] Compose/sora editor with syntax highlighting, tabs, search
 - [ ] Gradle wrapper per project; `assembleDebug`

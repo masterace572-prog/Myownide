@@ -3,11 +3,14 @@ package com.anoy.ide
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.anoy.ide.auth.AuthEmailScreen
 import com.anoy.ide.auth.WelcomeScreen
 import com.anoy.ide.core.session.SessionStore
+import com.anoy.ide.core.session.ThemePreference
 import com.anoy.ide.navigation.ForgeStage
+import kotlinx.coroutines.launch
 import com.anoy.ide.onboarding.OnboardingScreen
 import com.anoy.ide.toolchain.ToolchainSetupScreen
 import com.anoy.ide.workspace.WorkspaceScreen
@@ -22,6 +25,10 @@ fun ForgeApp(
     viewModel: ForgeAppViewModel = viewModel<ForgeAppViewModel>(factory = ForgeAppViewModel.Factory)
 ) {
     val stage by sessionStore.stage.collectAsState(initial = ForgeStage.ONBOARDING.name)
+    val themeName by sessionStore.theme.collectAsState(
+        initial = ThemePreference.SYSTEM.name
+    )
+    val scope = rememberCoroutineScope()
 
     when (stage) {
         ForgeStage.ONBOARDING.name -> OnboardingScreen(
@@ -44,6 +51,8 @@ fun ForgeApp(
         )
 
         ForgeStage.WORKSPACE.name -> WorkspaceScreen(
+            theme = ThemePreference.from(themeName),
+            onThemeChange = { scope.launch { sessionStore.setTheme(it) } },
             onSignOut = { viewModel.saveStage(ForgeStage.WELCOME) }
         )
     }
