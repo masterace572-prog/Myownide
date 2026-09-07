@@ -96,7 +96,7 @@ fun BuildScreen() {
                     running = true
                     progress = 0f
                     status = "Build started"
-                    log = "> Task :$taskName\n" +
+                    log = "> Task :${taskName()}\n" +
                         "Forge will invoke the project's Gradle wrapper.\n" + log
                     repeat(6) { step ->
                         delay(500)
@@ -106,7 +106,7 @@ fun BuildScreen() {
                     running = false
                     progress = 1f
                     status = "${variant.displayName} build finished"
-                    log = "> Task :$taskName\nBUILD SUCCESSFUL\n" + log
+                    log = "> Task :${taskName()}\nBUILD SUCCESSFUL\n" + log
                 }
             },
             modifier = Modifier.fillMaxWidth()

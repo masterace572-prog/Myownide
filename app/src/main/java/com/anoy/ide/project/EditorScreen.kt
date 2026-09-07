@@ -114,7 +114,7 @@ fun EditorScreen(
             ForgeStatusLabel(
                 text = "Saved",
                 tone = StatusTone.Success,
-                modifier = Modifier.padding(horizontal = 16.dp, top = 8.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
             )
         }
         if (error != null) {
@@ -122,7 +122,7 @@ fun EditorScreen(
                 text = error!!,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(horizontal = 16.dp, top = 8.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
             )
         }
 
