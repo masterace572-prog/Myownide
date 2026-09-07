@@ -25,7 +25,8 @@ object GradleProjectGenerator {
 
         val isLibrary = config.template == ProjectTemplate.LIBRARY_MODULE
         val moduleName = if (isLibrary) "library" else "app"
-        val sourceDirName = if (config.language == ProjectLanguage.KOTLIN) "kotlin" else "java"
+        // Android Studio's default is src/main/java for both Kotlin and Java.
+        val sourceDirName = "java"
 
         writeSettings(root, config, isLibrary)
         writeRootBuild(root, config, isLibrary)

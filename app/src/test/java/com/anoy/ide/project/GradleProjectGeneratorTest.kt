@@ -73,6 +73,6 @@ class GradleProjectGeneratorTest {
 
         assertTrue(File(dir, "settings.gradle.kts").isFile)
         assertTrue(File(dir, "library/build.gradle.kts").isFile)
-        assertTrue(File(dir, "library/src/main/kotlin/com/example/mylibrary/LibraryApi.kt").isFile)
+        assertTrue(File(dir, "library/src/main/java/com/example/mylibrary/LibraryApi.kt").isFile)
     }
 }
