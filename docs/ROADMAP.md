@@ -20,8 +20,10 @@ Work is derived from [`PRD.md`](../PRD.md) and prioritised by P0 / P1 / P2.
 
 - [ ] Toolchain installer: resumable downloads, SHA-256, verified install
 - [ ] Process runtime: foreground service, controlled env, pty JNI
-- [ ] New project wizard (Empty Compose/Views, Library, No Activity)
-- [ ] Project tree, file operations, filter build/.gradle
+- [x] New project wizard (Empty Compose/Views, Basic Views, Library, No Activity;
+      Kotlin/Java, Kotlin DSL/Groovy)
+- [x] Project generation + local project manager (files/projects)
+- [ ] Project tree file operations, filter build/.gradle (tree listing done)
 - [ ] Compose/sora editor with syntax highlighting, tabs, search
 - [ ] Gradle wrapper per project; `assembleDebug`
 - [ ] Install via PackageInstaller on-device

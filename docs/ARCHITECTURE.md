@@ -9,11 +9,12 @@ the toolchain, editor and terminal grow.
 app/src/main/java/com/anoy/ide/
 ├── core/ui/theme/        Design tokens (color, type, shape, theme)
 ├── core/ui/components/   Reusable quiet UI primitives
-├── core/build/           Gradle wrapper resolution (project-specific Gradle)
+├── core/gradle/          Gradle wrapper resolution (project-specific Gradle)
 ├── navigation/           High-level session flow model
 ├── onboarding/           First-run onboarding
 ├── auth/                 Welcome + email/password flow
 ├── toolchain/            Toolchain setup list + simulated install state
+├── project/              Project wizard, generator, manager, project tree
 ├── workspace/            Main shell with bottom navigation
 └── ForgeApp.kt            Top-level session router
 ```
@@ -34,9 +35,9 @@ app/src/main/java/com/anoy/ide/
 
 ## Current data flow
 
-`MainActivity` -> `ForgeTheme` -> `ForgeApp` (in-memory stage state machine) ->
-feature screens. The router is intentionally simple for M0; replace with
-persisted session state + Navigation Compose once auth lands.
+`MainActivity` -> `ForgeTheme` -> `ForgeApp` (DataStore stage flow) -> feature
+screens. New projects are created by `GradleProjectGenerator` under
+`files/projects/<name>` and listed by `ProjectManager`.
 
 ## Roadmap handoff
 
