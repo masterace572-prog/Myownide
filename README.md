@@ -5,43 +5,49 @@ provides the complete Android development loop on a phone or tablet — create o
 open a Gradle project, edit Kotlin/Java/XML/Compose, compile debug or release
 builds, run unit tests, inspect logs, sign, install and ship.
 
-The product requirements live in [`PRD.md`](./PRD.md). This repository contains
-the app source. The current branch is built from **Milestone 0: Foundations**
-(design system, splash, onboarding, auth flow, toolchain setup shell, workspace
-shell).
+The product requirements live in [`PRD.md`](./PRD.md).
 
 ## Status
 
-Milestone 0 — in progress.
+**Milestone 0 builds green; Milestone 1 foundation in progress.**
 
 Implemented so far:
 
-- Gradle/Kotlin/Compose project for a fresh Android app.
-- Forge design system: quiet warm surfaces, terracotta accent, serif display
-  type, sans UI, monospace code.
-- Splash screen using the Android 12 SplashScreen API.
-- Onboarding (3 pages), Welcome/Auth email screen, Toolchain setup screen
-  (simulated install flow), and a workspace shell with Files / Editor / Build /
-  Terminal bottom navigation.
-- Toolchain screen marks only components needed to compile an Android project
-  as required (JDK, Android SDK platform, build-tools, Gradle wrapper launcher,
-  Kotlin compiler). adb, Git, NDK, extra API levels, and offline sources are
-  optional and can be added later.
-- M0 roadmap and architecture docs, plus Gradle-compatibility docs (projects use
-  their own Gradle wrapper version).
+- Gradle/Kotlin/Compose Android app (`com.anoy.ide`, min SDK 29).
+- Forge design system (quiet warm surfaces, terracotta accent, serif/sans/mono).
+- Splash, onboarding (3 pages), welcome/email auth, toolchain setup flow.
+- Toolchain marks only compile essentials as required; adb/Git/NDK/extra API
+  levels/offline sources are optional.
+- **Project wizard + generator**: Empty Compose, Empty Views, Basic Views,
+  Library, No Activity; Kotlin/Java; Kotlin DSL/Groovy. Generates a standard
+  Android Studio project with its own Gradle wrapper.
+- **Project manager + tree**: app-private storage, recent projects, source tree
+  (generated/build dirs hidden).
+- **Editor shell**: open/edit/save text files from the tree.
+- **Build tab**: variant selector (debug/release) and assemble action shell.
+- **Gradle wrapper resolver**: reads each project's `gradle-wrapper.properties`
+  so Forge builds with the project's own Gradle version (Android Studio parity).
+- Supabase schema, RLS policies, edge functions, client/email auth scaffolding.
+- Unit tests for wrapper resolution and project generation.
 
-Not yet implemented: real Supabase auth, Hilt/Room wiring, actual toolchain
-downloader, editor, build engine, terminal, and tests.
+CI (`Android CI`) runs `assembleDebug`, uploads `forge-debug-apk`, and runs unit
+tests. It passes.
+
+**Still to build (tracked in `docs/ROADMAP.md`):** real on-device toolchain
+installer (parallel/resumable downloads + SHA-256), the Gradle process runtime +
+real build engine, syntax-highlighted editor with tabs/LSP, terminal, signing
+UI, unit-test explorer, git UI, settings/sync, Supabase Google sign-in, Hilt/Room
+wiring, and on-device install via `PackageInstaller`/adb.
 
 ## Build
 
-This is an Android project. It requires a local Android SDK, JDK 17 and Gradle
-8.9+ to build. No Android SDK or JDK is available in the current Arena sandbox,
-so the source is committed as a clean scaffold. A Gradle wrapper is not committed
-yet; Android Studio will generate one on first open, or you can run:
+Requires a local Android SDK, JDK 17 and Gradle 8.9+ (CI uses `gradle wrapper`
+then `./gradlew :app:assembleDebug`). No Android SDK/JDK exists in the Arena
+sandbox, so the source is compiled via GitHub Actions.
 
 ```bash
-gradle :app:assembleDebug
+gradle wrapper --gradle-version 8.9
+./gradlew :app:assembleDebug
 ```
 
 ## Requirements
@@ -51,8 +57,7 @@ gradle :app:assembleDebug
 
 ## Contributing
 
-See [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) for the module/package
-layout and conventions, [`docs/ROADMAP.md`](./docs/ROADMAP.md) for the
-Milestone plan derived from the PRD, [`docs/COMPATIBILITY.md`](./docs/COMPATIBILITY.md)
-for how Forge supports any project's Gradle build, and
-[`docs/SUPABASE.md`](./docs/SUPABASE.md) for the backend setup.
+See [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) for layout/conventions,
+[`docs/ROADMAP.md`](./docs/ROADMAP.md) for the Milestone plan,
+[`docs/COMPATIBILITY.md`](./docs/COMPATIBILITY.md) for Gradle parity, and
+[`docs/SUPABASE.md`](./docs/SUPABASE.md) for backend setup.
