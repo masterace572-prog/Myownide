@@ -17,9 +17,9 @@ data class TestSuiteResult(
 }
 
 /**
- * Parses JUnit XML reports emitted by Gradle
- * (`build/test-results/testDebugUnitTest/*.xml`). Standard parser used so the
- * unit-test explorer can render a project's results without a device.
+ * Parses JUnit XML reports emitted by Gradle below
+ * build/test-results/testDebugUnitTest (files ending in .xml). Standard parser
+ * used so the unit-test explorer can render results without a device.
  */
 object TestReportParser {
 
