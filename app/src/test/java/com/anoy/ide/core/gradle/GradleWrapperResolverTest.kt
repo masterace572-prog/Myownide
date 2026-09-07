@@ -71,4 +71,24 @@ class GradleWrapperResolverTest {
         )
         assertEquals("gradle-8.9-bin", GradleWrapperResolver.cacheFolderName(info))
     }
+
+    @Test
+    fun downloadFileNameIsPredictable() {
+        val info = GradleWrapperResolver.fromDistributionUrl(
+            "https://services.gradle.org/distributions/gradle-8.9-bin.zip"
+        )
+        assertEquals("gradle-8.9-bin.zip", GradleWrapperResolver.downloadFileName(info))
+    }
+
+    @Test
+    fun trustsOfficialGradleHostOnly() {
+        val official = GradleWrapperResolver.fromDistributionUrl(
+            "https://services.gradle.org/distributions/gradle-8.9-bin.zip"
+        )
+        val mirror = GradleWrapperResolver.fromDistributionUrl(
+            "https://example.com/gradle-8.9-bin.zip"
+        )
+        assertEquals(true, GradleWrapperResolver.isTrustedDistributionUrl(official))
+        assertEquals(false, GradleWrapperResolver.isTrustedDistributionUrl(mirror))
+    }
 }

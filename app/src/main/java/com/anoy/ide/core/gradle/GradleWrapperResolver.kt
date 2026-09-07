@@ -76,4 +76,22 @@ object GradleWrapperResolver {
      */
     fun cacheFolderName(info: GradleWrapperInfo): String =
         "gradle-${info.version}-${info.distributionType}"
+
+    /**
+     * The file name used when downloading the distribution, e.g.
+     * "gradle-8.9-bin.zip".
+     */
+    fun downloadFileName(info: GradleWrapperInfo): String =
+        "gradle-${info.version}-${info.distributionType}.zip"
+
+    /**
+     * Whether the distribution URL points at the official Gradle service.
+     * Forge pins verification to known SHA-256 checksums or a signed manifest;
+     * we allow official URLs and mirror URLs while rejecting arbitrary sources
+     * in the installer layer.
+     */
+    fun isTrustedDistributionUrl(info: GradleWrapperInfo): Boolean {
+        val host = info.distributionUrl.substringAfter("://").substringBefore('/')
+        return host == "services.gradle.org" || host.endsWith(".services.gradle.org")
+    }
 }
