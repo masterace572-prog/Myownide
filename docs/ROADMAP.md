@@ -29,7 +29,8 @@ Work is derived from [`PRD.md`](../PRD.md) and prioritised by P0 / P1 / P2.
 - [x] Open existing project from SAF folder picker (copy into private storage)
 - [x] Editor shell: open/edit/save text files from project tree
 - [ ] Compose/sora editor with syntax highlighting, tabs, search
-- [ ] Gradle wrapper per project; `assembleDebug`
+- [x] Gradle wrapper per project; Gradle command builder (wrapper + toolchain JVM)
+- [ ] Real Gradle build engine (process runtime) using #GradleCommandBuilder
 - [ ] Install via PackageInstaller on-device
 - [ ] Terminal emulator + bundled shell/coreutils
 
@@ -38,7 +39,8 @@ Work is derived from [`PRD.md`](../PRD.md) and prioritised by P0 / P1 / P2.
 - [x] Variant selector/build action shell (real Gradle wiring in M1)
 - [ ] Product flavors, signing config UI
 - [ ] Release APK/AAB builds, keystore management
-- [ ] Unit test explorer (Gradle XML reports), `--tests` filters
+- [x] JUnit XML report parser for unit test results
+- [ ] Unit test explorer UI (Gradle XML reports), `--tests` filters
 - [ ] Problems panel, build/lint diagnostics with source links
 - [ ] Logcat viewer
 - [ ] Kotlin/Java LSP completion, hover, diagnostics

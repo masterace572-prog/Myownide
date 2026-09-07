@@ -22,11 +22,15 @@ Implemented so far:
   Library, No Activity; Kotlin/Java; Kotlin DSL/Groovy. Generates a standard
   Android Studio project with its own Gradle wrapper.
 - **Project manager + tree**: app-private storage, recent projects, source tree
-  (generated/build dirs hidden).
+  (generated/build dirs hidden), and SAF "Open existing project".
 - **Editor shell**: open/edit/save text files from the tree.
 - **Build tab**: variant selector (debug/release) and assemble action shell.
 - **Gradle wrapper resolver**: reads each project's `gradle-wrapper.properties`
   so Forge builds with the project's own Gradle version (Android Studio parity).
+- **Gradle distribution installer**: downloads/verifies a project's Gradle
+  archive (SHA-256, trusted-host check) into the shared toolchain cache.
+- **Gradle command builder + JUnit XML parser**: pure engine/test foundations.
+- **Settings**: persisted System/Light/Dark theme, toolchain/storage/about.
 - Supabase schema, RLS policies, edge functions, client/email auth scaffolding.
 - Unit tests for wrapper resolution and project generation.
 
