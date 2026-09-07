@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.anoy.ide.core.session.SessionStore
 import com.anoy.ide.core.ui.theme.ForgeTheme
 
 class MainActivity : ComponentActivity() {
@@ -12,13 +13,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         splashScreen.setKeepOnScreenCondition {
-            // M0: keep the splashboard visible until compose is ready.
             false
         }
 
+        val sessionStore = SessionStore(applicationContext)
+
         setContent {
             ForgeTheme {
-                ForgeApp()
+                ForgeApp(sessionStore = sessionStore)
             }
         }
     }

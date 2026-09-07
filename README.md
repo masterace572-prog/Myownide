@@ -47,5 +47,6 @@ gradle :app:assembleDebug
 ## Contributing
 
 See [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) for the module/package
-layout and conventions, and [`docs/ROADMAP.md`](./docs/ROADMAP.md) for the
-Milestone plan derived from the PRD.
+layout and conventions, [`docs/ROADMAP.md`](./docs/ROADMAP.md) for the
+Milestone plan derived from the PRD, and [`docs/SUPABASE.md`](./docs/SUPABASE.md)
+for the backend setup and the three secrets/values that may need to be provided.

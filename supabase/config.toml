@@ -1,0 +1,27 @@
+project_id = "forge-ide"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+
+[db]
+port = 54322
+
+[auth]
+enabled = true
+site_url = "forge://auth/callback"
+additional_redirect_urls = ["forge://auth/callback"]
+
+[auth.email]
+enable_signup = true
+
+[auth.email.magic_link]
+enabled = false
+
+[auth.oauth.google]
+enabled = true
+
+[storage]
+enabled = true
+file_size_limit = "512KB"

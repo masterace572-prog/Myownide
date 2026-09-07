@@ -1,53 +1,50 @@
 package com.anoy.ide
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.anoy.ide.auth.AuthEmailScreen
 import com.anoy.ide.auth.WelcomeScreen
+import com.anoy.ide.core.session.SessionStore
 import com.anoy.ide.navigation.ForgeStage
 import com.anoy.ide.onboarding.OnboardingScreen
 import com.anoy.ide.toolchain.ToolchainSetupScreen
 import com.anoy.ide.workspace.WorkspaceScreen
 
 /**
- * Top-level flow for Milestone 0.
- *
- * The router is intentionally a simple state machine for now so the product
- * skeleton can be evaluated before Supabase auth and persisted session state are
- * introduced.
+ * Top-level flow. The stage is persisted in DataStore so the user returns to
+ * where they left off after a restart or process death.
  */
 @Composable
-fun ForgeApp() {
-    var stageName by rememberSaveable {
-        mutableStateOf(ForgeStage.ONBOARDING.name)
-    }
+fun ForgeApp(
+    sessionStore: SessionStore,
+    viewModel: ForgeAppViewModel = viewModel<ForgeAppViewModel>(factory = ForgeAppViewModel.Factory)
+) {
+    val stage by sessionStore.stage.collectAsState(initial = ForgeStage.ONBOARDING.name)
 
-    val stage = ForgeStage.valueOf(stageName)
     when (stage) {
-        ForgeStage.ONBOARDING -> OnboardingScreen(
-            onFinished = { stageName = ForgeStage.WELCOME.name }
+        ForgeStage.ONBOARDING.name -> OnboardingScreen(
+            onFinished = { viewModel.goTo(ForgeStage.WELCOME) }
         )
 
-        ForgeStage.WELCOME -> WelcomeScreen(
-            onGoogle = { /* TODO(M0): Supabase Google sign-in via Credential Manager */ },
-            onEmail = { stageName = ForgeStage.AUTH.name },
-            onContinueWithoutAccount = { stageName = ForgeStage.TOOLCHAIN_SETUP.name }
+        ForgeStage.WELCOME.name -> WelcomeScreen(
+            onGoogle = { viewModel.saveStage(ForgeStage.WELCOME) /* TODO(M0): Google sign-in */ },
+            onEmail = { viewModel.saveStage(ForgeStage.AUTH) },
+            onContinueWithoutAccount = { viewModel.saveStage(ForgeStage.TOOLCHAIN_SETUP) }
         )
 
-        ForgeStage.AUTH -> AuthEmailScreen(
-            onBack = { stageName = ForgeStage.WELCOME.name },
-            onAuthenticated = { stageName = ForgeStage.TOOLCHAIN_SETUP.name }
+        ForgeStage.AUTH.name -> AuthEmailScreen(
+            onBack = { viewModel.saveStage(ForgeStage.WELCOME) },
+            onAuthenticated = { viewModel.saveStage(ForgeStage.TOOLCHAIN_SETUP) }
         )
 
-        ForgeStage.TOOLCHAIN_SETUP -> ToolchainSetupScreen(
-            onComplete = { stageName = ForgeStage.WORKSPACE.name }
+        ForgeStage.TOOLCHAIN_SETUP.name -> ToolchainSetupScreen(
+            onComplete = { viewModel.savedToolchainComplete() }
         )
 
-        ForgeStage.WORKSPACE -> WorkspaceScreen(
-            onSignOut = { stageName = ForgeStage.WELCOME.name }
+        ForgeStage.WORKSPACE.name -> WorkspaceScreen(
+            onSignOut = { viewModel.saveStage(ForgeStage.WELCOME) }
         )
     }
 }
