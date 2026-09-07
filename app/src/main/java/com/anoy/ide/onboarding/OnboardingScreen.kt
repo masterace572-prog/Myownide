@@ -166,7 +166,7 @@ private fun OnboardingIllustration(tint: Color) {
         contentAlignment = Alignment.Center
     ) {
         androidx.compose.material3.Icon(
-            imageVector = androidx.compose.material.icons.Icons.Outlined.DeveloperMode,
+            imageVector = androidx.compose.material.icons.Icons.Outlined.Code,
             contentDescription = null,
             tint = tint,
             modifier = Modifier.size(56.dp)

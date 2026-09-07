@@ -3,6 +3,7 @@ package com.anoy.ide.auth
 import com.anoy.ide.core.config.ForgeConfig
 import com.anoy.ide.core.supabase.createSupabaseClient
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
 
 /**
  * Thin auth facade for Milestone 0. It wires email/password against Supabase

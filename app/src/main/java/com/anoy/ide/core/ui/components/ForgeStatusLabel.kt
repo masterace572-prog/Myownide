@@ -32,13 +32,11 @@ fun ForgeStatusLabel(
     tone: StatusTone,
     modifier: Modifier = Modifier
 ) {
-    val stateColor = { light: Color, dark: Color ->
-        if (isSystemInDarkTheme()) dark else light
-    }
+    val darkTheme = isSystemInDarkTheme()
     val color = when (tone) {
-        StatusTone.Success -> stateColor(ForgeColors.SuccessLight, ForgeColors.SuccessDark)
+        StatusTone.Success -> if (darkTheme) ForgeColors.SuccessDark else ForgeColors.SuccessLight
         StatusTone.Error -> MaterialTheme.colorScheme.error
-        StatusTone.Warning -> stateColor(ForgeColors.WarningLight, ForgeColors.WarningDark)
+        StatusTone.Warning -> if (darkTheme) ForgeColors.WarningDark else ForgeColors.WarningLight
         StatusTone.Neutral -> MaterialTheme.colorScheme.onSurfaceVariant
     }
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
