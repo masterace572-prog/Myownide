@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.anoy.ide.build.BuildScreen
 import com.anoy.ide.project.FilesScreen
 
 private data class WorkspaceTab(
@@ -128,6 +129,14 @@ fun WorkspaceScreen(onSignOut: () -> Unit) {
                     .padding(paddingValues)
             ) {
                 FilesScreen()
+            }
+        } else if (selectedIndex == 2) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                BuildScreen()
             }
         } else {
             val tab = tabs[selectedIndex]

@@ -14,7 +14,8 @@ app/src/main/java/com/anoy/ide/
 ├── onboarding/           First-run onboarding
 ├── auth/                 Welcome + email/password flow
 ├── toolchain/            Toolchain setup list + simulated install state
-├── project/              Project wizard, generator, manager, project tree
+├── project/              Project wizard, generator, manager, project tree, editor
+├── build/                Build tab with variant selection + assembly shell
 ├── workspace/            Main shell with bottom navigation
 └── ForgeApp.kt            Top-level session router
 ```

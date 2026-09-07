@@ -24,6 +24,7 @@ Work is derived from [`PRD.md`](../PRD.md) and prioritised by P0 / P1 / P2.
       Kotlin/Java, Kotlin DSL/Groovy)
 - [x] Project generation + local project manager (files/projects)
 - [ ] Project tree file operations, filter build/.gradle (tree listing done)
+- [x] Editor shell: open/edit/save text files from project tree
 - [ ] Compose/sora editor with syntax highlighting, tabs, search
 - [ ] Gradle wrapper per project; `assembleDebug`
 - [ ] Install via PackageInstaller on-device
@@ -31,7 +32,8 @@ Work is derived from [`PRD.md`](../PRD.md) and prioritised by P0 / P1 / P2.
 
 ## Milestone 2 — Quality (6 weeks)
 
-- [ ] Variant selector, product flavors, signing config UI
+- [x] Variant selector/build action shell (real Gradle wiring in M1)
+- [ ] Product flavors, signing config UI
 - [ ] Release APK/AAB builds, keystore management
 - [ ] Unit test explorer (Gradle XML reports), `--tests` filters
 - [ ] Problems panel, build/lint diagnostics with source links

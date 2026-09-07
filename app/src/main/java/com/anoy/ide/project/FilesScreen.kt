@@ -45,6 +45,7 @@ fun FilesScreen() {
     var projects by remember { mutableStateOf<List<ProjectInfo>>(emptyList()) }
     var showNewProject by remember { mutableStateOf(false) }
     var selectedProject by remember { mutableStateOf<ProjectInfo?>(null) }
+    var openFile by remember { mutableStateOf<ProjectTreeNode?>(null) }
 
     LaunchedEffect(Unit) {
         projects = manager.listProjects()
@@ -63,13 +64,23 @@ fun FilesScreen() {
             return
         }
 
+        selectedProject != null && openFile != null -> {
+            EditorScreen(
+                file = openFile!!,
+                onBack = { openFile = null }
+            )
+            return
+        }
+
         selectedProject != null -> {
             ProjectTreeScreen(
                 project = selectedProject!!,
                 onBack = {
                     selectedProject = null
+                    openFile = null
                     projects = emptyList()
-                }
+                },
+                onOpenFile = { openFile = it }
             )
             return
         }

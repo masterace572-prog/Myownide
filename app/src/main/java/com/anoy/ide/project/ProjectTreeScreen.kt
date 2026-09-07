@@ -1,5 +1,6 @@
 package com.anoy.ide.project
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,7 +38,8 @@ import java.io.File
 @Composable
 fun ProjectTreeScreen(
     project: ProjectInfo,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onOpenFile: (ProjectTreeNode) -> Unit
 ) {
     var tree by remember { mutableStateOf<ProjectTreeNode?>(null) }
 
@@ -87,17 +89,28 @@ fun ProjectTreeScreen(
             )
         ) {
             items(flatten(root)) { (node, depth) ->
-                TreeNodeRow(node = node, depth = depth)
+                TreeNodeRow(
+                    node = node,
+                    depth = depth,
+                    onClick = {
+                        if (!node.isDirectory) onOpenFile(node)
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-private fun TreeNodeRow(node: ProjectTreeNode, depth: Int) {
+private fun TreeNodeRow(
+    node: ProjectTreeNode,
+    depth: Int,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(enabled = !node.isDirectory, onClick = onClick)
             .padding(start = (depth * 16).dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
