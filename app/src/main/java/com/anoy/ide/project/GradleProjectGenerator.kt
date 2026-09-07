@@ -85,7 +85,7 @@ object GradleProjectGenerator {
             include ':$moduleName'
             """.trimIndent()
         }
-        write(root, "settings.gradle.${if (dsl == ProjectBuildConfig.KOTLIN_DSL) "kts" else "gradle"}", content)
+        write(root, if (dsl == ProjectBuildConfig.KOTLIN_DSL) "settings.gradle.kts" else "settings.gradle", content)
     }
 
     private fun writeRootBuild(root: File, config: ProjectConfig, isLibrary: Boolean) {
@@ -116,7 +116,7 @@ object GradleProjectGenerator {
             }
             """.trimIndent().trimEnd()
         }
-        write(root, "build.gradle.${if (dsl == ProjectBuildConfig.KOTLIN_DSL) "kts" else "gradle"}", content)
+        write(root, if (dsl == ProjectBuildConfig.KOTLIN_DSL) "build.gradle.kts" else "build.gradle", content)
     }
 
     private fun writeProperties(root: File) {
@@ -244,7 +244,7 @@ object GradleProjectGenerator {
             """.trimIndent().trimEnd()
         }
 
-        write(root, "$moduleName/build.gradle.${if (dsl == ProjectBuildConfig.KOTLIN_DSL) "kts" else "gradle"}", content)
+        write(root, if (dsl == ProjectBuildConfig.KOTLIN_DSL) "$moduleName/build.gradle.kts" else "$moduleName/build.gradle", content)
     }
 
     private fun writeAppSources(
