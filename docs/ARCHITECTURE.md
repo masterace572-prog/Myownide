@@ -39,4 +39,7 @@ persisted session state + Navigation Compose once auth lands.
 
 ## Roadmap handoff
 
-See [`ROADMAP.md`](./ROADMAP.md) for the ordered task list.
+See [`ROADMAP.md`](./ROADMAP.md) for the ordered task list and
+[`COMPATIBILITY.md`](./COMPATIBILITY.md) for how build/opened projects use
+their own Gradle wrapper so anything that builds in Android Studio also builds in
+Forge.

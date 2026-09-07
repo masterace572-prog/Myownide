@@ -20,9 +20,13 @@ data class ToolchainComponent(
     val name: String,
     val version: String,
     val size: String,
-    val optional: Boolean,
+    /** true = needed to compile Android projects, false = downloadable later. */
+    val requiredForBuild: Boolean,
+    val note: String? = null,
     val status: ComponentStatus = ComponentStatus.Pending
-)
+) {
+    val isOptional: Boolean get() = !requiredForBuild
+}
 
 data class ToolchainUiState(
     val components: List<ToolchainComponent>,
@@ -33,24 +37,51 @@ data class ToolchainUiState(
 )
 
 /**
- * M0 model for toolchain setup. The download, checksum verification and post
- * install verification are simulated here; the real installer (parallel
- * downloads, HTTP Range, SHA-256, signed manifest) lands in M1.
+ * M0 model for toolchain setup.
+ *
+ * Only the components needed to compile an Android project are required:
+ * a JDK, the Android SDK platform + build-tools, platform-tools, a Gradle
+ * launcher, and the Kotlin compiler. Everything else (Git, NDK, extra API
+ * levels, offline documentation sources) is optional and can be installed
+ * later without affecting build capability.
+ *
+ * The download/checksum verification is simulated here; the real installer
+ * (parallel downloads, HTTP Range, SHA-256, signed manifest) lands in M1.
  */
 class ToolchainViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         ToolchainUiState(
             components = listOf(
-                ToolchainComponent("OpenJDK 17", "17.0.12", "180 MB", false),
-                ToolchainComponent("Android SDK platform", "API 35", "65 MB", false),
-                ToolchainComponent("Build-Tools", "35.0.0", "120 MB", false),
-                ToolchainComponent("Platform-Tools (adb)", "35.0.2", "12 MB", false),
-                ToolchainComponent("Gradle", "8.9", "130 MB", false),
-                ToolchainComponent("Kotlin compiler", "2.0.0", "90 MB", false),
-                ToolchainComponent("Git", "2.45.0", "25 MB", false),
-                ToolchainComponent("NDK (arm64)", "27.0.0", "640 MB", true),
-                ToolchainComponent("Additional API levels", "API 34", "45 MB", true)
+                // Required to compile an Android project.
+                ToolchainComponent("OpenJDK 17", "17.0.12", "180 MB",
+                    requiredForBuild = true),
+                ToolchainComponent("Android SDK platform", "API 35", "65 MB",
+                    requiredForBuild = true),
+                ToolchainComponent("Build-Tools", "35.0.0", "120 MB",
+                    requiredForBuild = true,
+                    note = "aapt2, d8, apksigner, zipalign"),
+                ToolchainComponent("Platform-Tools (adb)", "35.0.2", "12 MB",
+                    requiredForBuild = true),
+                ToolchainComponent("Gradle launcher", "wrapper-aware", "40 MB",
+                    requiredForBuild = true,
+                    note = "Projects use their own Gradle wrapper version"),
+                ToolchainComponent("Kotlin compiler", "2.0.0", "90 MB",
+                    requiredForBuild = true),
+
+                // Optional; not needed to compile a plain Android project.
+                ToolchainComponent("Git", "2.45.0", "25 MB",
+                    requiredForBuild = false,
+                    note = "Version control UI"),
+                ToolchainComponent("NDK (arm64)", "27.0.0", "640 MB",
+                    requiredForBuild = false,
+                    note = "Only for C/C++ native code"),
+                ToolchainComponent("Additional API levels", "API 34", "45 MB",
+                    requiredForBuild = false,
+                    note = "Only if you target other SDKs"),
+                ToolchainComponent("Sources for docs", "latest", "35 MB",
+                    requiredForBuild = false,
+                    note = "Offline documentation/completion")
             )
         )
     )
@@ -61,21 +92,32 @@ class ToolchainViewModel : ViewModel() {
         if (_uiState.value.isRunning) return
         viewModelScope.launch {
             _uiState.update { it.copy(isRunning = true, selectedForRun = false) }
-            val total = _uiState.value.components.size
+            // Install only the required components automatically; optional ones
+            // stay available in the list but are not forced during first setup.
+            val required = _uiState.value.components.filter { it.requiredForBuild }
+            val total = required.size
             var verified = 0
-            _uiState.value.components.indices.forEach { index ->
+            required.forEach { target ->
                 _uiState.update { state ->
                     state.copy(
-                        components = state.components.mapIndexed { i, component ->
-                            if (i == index) component.copy(status = ComponentStatus.Installing) else component
+                        components = state.components.map { component ->
+                            if (component.name == target.name && component.requiredForBuild) {
+                                component.copy(status = ComponentStatus.Installing)
+                            } else {
+                                component
+                            }
                         }
                     )
                 }
                 delay(650)
                 _uiState.update { state ->
                     state.copy(
-                        components = state.components.mapIndexed { i, component ->
-                            if (i == index) component.copy(status = ComponentStatus.Verified) else component
+                        components = state.components.map { component ->
+                            if (component.name == target.name && component.requiredForBuild) {
+                                component.copy(status = ComponentStatus.Verified)
+                            } else {
+                                component
+                            }
                         },
                         progress = verified.toFloat() / total
                     )

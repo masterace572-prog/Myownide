@@ -62,6 +62,12 @@ fun ToolchainSetupScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Only the required items are needed to compile Android projects. Git, NDK, extra API levels and offline sources are optional and can be added later.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
 
         PreflightCard()
@@ -138,7 +144,7 @@ private fun PreflightCard() {
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Storage: 2.8 GB free. RAM: 6 GB. Network: Wi-Fi recommended.",
+            text = "Required setup: about 500 MB. Storage: 2.8 GB free recommended. RAM: 6 GB. Network: Wi-Fi recommended. Optional items add roughly 700 MB.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -161,9 +167,13 @@ private fun ToolchainRow(component: ToolchainComponent) {
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
+            val subtitle = buildString {
+                append("${component.version} · ${component.size}")
+                append(if (component.isOptional) " · optional" else " · required")
+                component.note?.let { append(" · $it") }
+            }
             Text(
-                text = "${component.version} · ${component.size}" +
-                    if (component.optional) " · optional" else "",
+                text = subtitle,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

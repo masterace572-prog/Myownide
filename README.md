@@ -23,7 +23,12 @@ Implemented so far:
 - Onboarding (3 pages), Welcome/Auth email screen, Toolchain setup screen
   (simulated install flow), and a workspace shell with Files / Editor / Build /
   Terminal bottom navigation.
-- M0 roadmap and architecture docs.
+- Toolchain screen marks only components needed to compile an Android project
+  as required (JDK, Android SDK platform, build-tools, platform-tools, Gradle
+  wrapper launcher, Kotlin compiler). Git, NDK, extra API levels, and offline
+  sources are optional.
+- M0 roadmap and architecture docs, plus Gradle-compatibility docs (projects use
+  their own Gradle wrapper version).
 
 Not yet implemented: real Supabase auth, Hilt/Room wiring, actual toolchain
 downloader, editor, build engine, terminal, and tests.
@@ -48,5 +53,6 @@ gradle :app:assembleDebug
 
 See [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) for the module/package
 layout and conventions, [`docs/ROADMAP.md`](./docs/ROADMAP.md) for the
-Milestone plan derived from the PRD, and [`docs/SUPABASE.md`](./docs/SUPABASE.md)
-for the backend setup and the three secrets/values that may need to be provided.
+Milestone plan derived from the PRD, [`docs/COMPATIBILITY.md`](./docs/COMPATIBILITY.md)
+for how Forge supports any project's Gradle build, and
+[`docs/SUPABASE.md`](./docs/SUPABASE.md) for the backend setup.
