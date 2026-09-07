@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun NewProjectWizardScreen(
-    onCreate: (ProjectConfig) -> Unit,
+    onCreate: (ProjectInfo) -> Unit,
     onCancel: () -> Unit,
     manager: ProjectManager
 ) {
@@ -181,7 +181,7 @@ fun NewProjectWizardScreen(
                 )
                 scope.launch {
                     runCatching { manager.createProject(config) }
-                        .onSuccess { onCreate(it) }
+                        .onSuccess { created -> onCreate(created) }
                         .onFailure { error = it.message ?: "Could not create project." }
                 }
             },
