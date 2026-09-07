@@ -13,13 +13,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.InsertDriveFile
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,9 +47,17 @@ fun ProjectTreeScreen(
     onOpenFile: (ProjectTreeNode) -> Unit
 ) {
     var tree by remember { mutableStateOf<ProjectTreeNode?>(null) }
+    var reloadKey by remember { mutableStateOf(0) }
+    var showNewFile by remember { mutableStateOf(false) }
+    var fileName by remember { mutableStateOf("") }
+    var fileError by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(project.path) {
+    LaunchedEffect(project.path, reloadKey) {
         tree = ProjectTree.load(File(project.path))
+    }
+
+    fun reload() {
+        reloadKey += 1
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -64,8 +77,16 @@ fun ProjectTreeScreen(
             Text(
                 text = project.name,
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.weight(1f)
             )
+            IconButton(onClick = { showNewFile = true }) {
+                Icon(
+                    imageVector = Icons.Outlined.Add,
+                    contentDescription = "New file",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
         }
 
         val root = tree
@@ -92,12 +113,64 @@ fun ProjectTreeScreen(
                 TreeNodeRow(
                     node = node,
                     depth = depth,
+                    showDelete = depth > 0,
                     onClick = {
                         if (!node.isDirectory) onOpenFile(node)
+                    },
+                    onDelete = {
+                        ProjectFileManager.delete(File(node.path))
+                        reload()
                     }
                 )
             }
         }
+    }
+
+    if (showNewFile) {
+        AlertDialog(
+            onDismissRequest = { showNewFile = false },
+            title = { Text("New file") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = fileName,
+                        onValueChange = {
+                            fileName = it
+                            fileError = null
+                        },
+                        label = { Text("File name") },
+                        singleLine = true
+                    )
+                    fileError?.let {
+                        Text(
+                            text = it,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val target = File(project.path, fileName)
+                        runCatching { ProjectFileManager.createFile(target.parentFile ?: File(project.path), fileName) }
+                            .onSuccess {
+                                showNewFile = false
+                                fileName = ""
+                                reload()
+                            }
+                            .onFailure {
+                                fileError = it.message ?: "Could not create file."
+                            }
+                    }
+                ) { Text("Create") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showNewFile = false }) { Text("Cancel") }
+            }
+        )
     }
 }
 
@@ -105,7 +178,9 @@ fun ProjectTreeScreen(
 private fun TreeNodeRow(
     node: ProjectTreeNode,
     depth: Int,
-    onClick: () -> Unit
+    showDelete: Boolean,
+    onClick: () -> Unit,
+    onDelete: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -128,8 +203,19 @@ private fun TreeNodeRow(
         Text(
             text = node.name,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.weight(1f)
         )
+        if (showDelete) {
+            IconButton(onClick = onDelete) {
+                Icon(
+                    imageVector = Icons.Outlined.Delete,
+                    contentDescription = "Delete ${node.name}",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+        }
     }
 }
 

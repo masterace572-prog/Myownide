@@ -23,8 +23,10 @@ Implemented so far:
   Android Studio project with its own Gradle wrapper.
 - **Project manager + tree**: app-private storage, recent projects, source tree
   (generated/build dirs hidden), and SAF "Open existing project".
-- **Editor shell**: open/edit/save text files from the tree.
-- **Build tab**: variant selector (debug/release) and assemble action shell.
+- **Editor shell**: open/edit/save text files from the tree; project tree supports
+  new/delete file operations.
+- **Build tab**: variant selector (debug/release), assemble action shell, and
+  install an APK on-device via `PackageInstaller`.
 - **Gradle wrapper resolver**: reads each project's `gradle-wrapper.properties`
   so Forge builds with the project's own Gradle version (Android Studio parity).
 - **Gradle distribution installer**: downloads/verifies a project's Gradle
