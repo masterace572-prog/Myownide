@@ -9,8 +9,11 @@ on:
 jobs:
   build-debug:
     name: Build debug APK
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    permissions:
+      contents: write
 
     env:
       GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx2g -Dorg.gradle.daemon=false"
@@ -57,4 +60,18 @@ jobs:
           if-no-files-found: error
 
       - name: Run unit tests
-        run: ./gradlew :app:testDebugUnitTest --stacktrace
+        run: |
+          set +e
+          ./gradlew :app:testDebugUnitTest --stacktrace > build-log.txt 2>&1
+          CODE=$?
+          cat build-log.txt
+          exit $CODE
+
+      - name: Publish build log
+        if: failure()
+        run: |
+          git config user.name "forge-ci"
+          git config user.email "forge-ci@users.noreply.github.com"
+          git add -f build-log.txt
+          git commit -m "[skip ci] test log" > /dev/null 2>&1 || true
+          git push origin HEAD:arena/01a07981-myownide > /dev/null 2>&1 || true
