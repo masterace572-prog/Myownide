@@ -1,5 +1,7 @@
 package com.anoy.ide.workspace
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,7 +27,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.anoy.ide.MainActivity
+import com.anoy.ide.core.install.DebugApkInstaller
+import com.anoy.ide.core.ui.components.ForgeOutlinedButton
 import com.anoy.ide.core.ui.components.ForgePrimaryButton
 import com.anoy.ide.core.ui.components.ForgeStatusLabel
 import com.anoy.ide.core.ui.components.StatusTone
@@ -50,7 +56,25 @@ fun BuildScreen() {
     var progress by remember { mutableStateOf(0f) }
     var status by remember { mutableStateOf<String?>(null) }
     var log by remember { mutableStateOf("") }
+    var installing by remember { mutableStateOf(false) }
+    var installStatus by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    val apkLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            scope.launch {
+                installing = true
+                installStatus = "Installing…"
+                DebugApkInstaller.install(context, uri, MainActivity::class.java)
+                    .onSuccess { installStatus = it }
+                    .onFailure { installStatus = it.message ?: "Install failed." }
+                installing = false
+            }
+        }
+    }
 
     fun taskName(): String = module + ":assemble" +
         variant.name.lowercase().replaceFirstChar { it.uppercase() }
@@ -113,6 +137,24 @@ fun BuildScreen() {
         )
 
         Spacer(modifier = Modifier.height(20.dp))
+
+        ForgeOutlinedButton(
+            text = if (installing) "Installing…" else "Install APK…",
+            onClick = {
+                apkLauncher.launch(arrayOf("application/vnd.android.package-archive"))
+            },
+            enabled = !installing && !running,
+            modifier = Modifier.fillMaxWidth()
+        )
+        if (installStatus != null) {
+            Spacer(modifier = Modifier.height(8.dp))
+            ForgeStatusLabel(
+                text = installStatus!!,
+                tone = if (installing) StatusTone.Warning else StatusTone.Success
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         if (running) {
             LinearProgressIndicator(
